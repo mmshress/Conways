@@ -1,7 +1,6 @@
-import sys, pygame
-import time
-import copy
-import pprint
+import sys, pygame, time, copy
+import Tkinter
+import tkMessageBox
 pygame.init()
 
 displayWidth = 1000
@@ -9,8 +8,15 @@ displayHeight = 1000
 cellWidth = 20
 cellHeight = 20
 margin = 5
+cells = []
 
 screen = pygame.display.set_mode((displayWidth, displayHeight))
+
+def drawFinalPopup():
+    root = Tkinter.Tk()
+    root.withdraw()
+    tkMessageBox.showinfo("Done!", "Final state reached!")
+    sys.exit()
 
 def drawGrid(cells, screen):
         column = 0
@@ -68,6 +74,7 @@ def updateCells(cells):
     # print("Generation complete")
     return newCells, (newCells == cells)
 
+
 #initialize cells
 cells = []
 for i in range((displayWidth / (cellWidth + margin))):
@@ -75,15 +82,35 @@ for i in range((displayWidth / (cellWidth + margin))):
     for j in range((displayHeight / (cellHeight + margin))):
         cells[i].append(0)
 
+
 conwaysFlag = False
 conwaysDone = False
 while True:
-    if(conwaysFlag):
+    if(conwaysFlag and not(conwaysDone)):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: #press Enter to interrupt/reset
+                conwaysFlag = False
+                #reinit cells
+                cells = []
+                for i in range((displayWidth / (cellWidth + margin))):
+                    cells.append([])
+                    for j in range((displayHeight / (cellHeight + margin))):
+                        cells[i].append(0)
+                continue
         screen.fill(pygame.Color("blue"))
         time.sleep(.4)
-        cells = updateCells(cells)
+        cells, conwaysDone = updateCells(cells) #conwaysDone flag to check if no change btn. generations
+        drawGrid(cells, screen)
+        pygame.display.flip()
+    elif(conwaysDone):
+        drawFinalPopup()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: #press Enter to interrupt/reset
+                conwaysFlag = False
+        screen.fill(pygame.Color("blue"))
+        time.sleep(.4)
         drawGrid(cells, screen)
         pygame.display.flip()
     else:
