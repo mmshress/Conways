@@ -16,7 +16,6 @@ def drawFinalPopup():
     root = Tkinter.Tk()
     root.withdraw()
     tkMessageBox.showinfo("Done!", "Final state reached!")
-    sys.exit()
 
 def drawGrid(cells, screen):
         column = 0
@@ -91,6 +90,7 @@ while True:
             if event.type == pygame.QUIT: sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: #press Enter to interrupt/reset
                 conwaysFlag = False
+                conwaysDone = False
                 #reinit cells
                 cells = []
                 for i in range((displayWidth / (cellWidth + margin))):
@@ -98,21 +98,17 @@ while True:
                     for j in range((displayHeight / (cellHeight + margin))):
                         cells[i].append(0)
                 continue
+        if(not(conwaysFlag)): continue #check for reset
         screen.fill(pygame.Color("blue"))
         time.sleep(.4)
         cells, conwaysDone = updateCells(cells) #conwaysDone flag to check if no change btn. generations
         drawGrid(cells, screen)
         pygame.display.flip()
-    elif(conwaysDone):
+    elif(conwaysDone): #reset if finished
+        conwaysFlag = False
+        conwaysDone = False
         drawFinalPopup()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: sys.exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: #press Enter to interrupt/reset
-                conwaysFlag = False
-        screen.fill(pygame.Color("blue"))
-        time.sleep(.4)
-        drawGrid(cells, screen)
-        pygame.display.flip()
+        continue
     else:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit()
