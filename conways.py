@@ -66,7 +66,7 @@ def updateCells(cells):
                     # print("Cell {0}, {1} came to life".format(i, j))
                     newCells[i][j] = 1
     # print("Generation complete")
-    return newCells
+    return newCells, (newCells == cells)
 
 #initialize cells
 cells = []
@@ -76,6 +76,7 @@ for i in range((displayWidth / (cellWidth + margin))):
         cells[i].append(0)
 
 conwaysFlag = False
+conwaysDone = False
 while True:
     if(conwaysFlag):
         for event in pygame.event.get():
@@ -90,8 +91,8 @@ while True:
             if event.type == pygame.QUIT: sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
-                column = x / 25
-                row = y / 25
+                column = x / (cellWidth + margin)
+                row = y / (cellWidth + margin)
                 if cells[column][row] == 0:
                     cells[column][row] = 1
                 elif cells[column][row] == 1:
